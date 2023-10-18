@@ -31,7 +31,7 @@ Neiron::Neiron(int layers, int* neironsCount) :
             w[i][j] = new double[xSize];
 
             for (int k = 0; k < xSize; k++)
-                w[i][j][k] = (double)rand() / RAND_MAX;
+                w[i][j][k] = - 1 + 2 * (double)rand() / RAND_MAX;
         }
 
     }
@@ -109,64 +109,49 @@ Neiron::~Neiron() {
 }
 
 //метод скрещивания двух неиросетей
-vector<Neiron*> Neiron::Cross(Neiron* parent) {
-    vector<Neiron*> res;
+Neiron* Neiron::Cross(Neiron* parent) {
+    
     int* mas = new int[this->layers];
-    int* mas1 = new int[this->layers];
+    
 
     for (int i = 0; i < this->layers; i++) {
         mas[i] = this->neironsCount[i];
-        mas1[i] = this->neironsCount[i];
+        
     }        
 
     Neiron* childr = new Neiron(this->layers, mas);
-    Neiron* childr1 = new Neiron(this->layers, mas1);
+    //Neiron* childr1 = new Neiron(this->layers, mas1);
     
 
-    int n = 1 + rand() % 3;
-
+    
+    
     //поменяли коэффициенты и веса на первом слое
-    for (int i = 0; i < n; i++) {
-        childr->koef[0][i] = this->koef[0][i];
-        childr1->koef[0][i] = parent->koef[0][i];
+    for (int i = 0; i < 8; i++) {
+      
+        childr->koef[0][i] = (this->koef[0][i] + parent->koef[0][i]) / 2;
+       
 
         for (int j = 0; j < 3; j++) {
-            childr->w[0][i][j] = this->w[0][i][j];
-            childr1->w[0][i][j] = parent->w[0][i][j];
+            
+            childr->w[0][i][j] = (this->w[0][i][j] + parent->w[0][i][j])/2;
+            
         }
     }
-
-    for (int i = n; i < 4; i++) {
-        childr1->koef[0][i] = this->koef[0][i];
-        childr->koef[0][i] = parent->koef[0][i];
-        
-        for (int j = 0; j < 3; j++) {
-            childr1->w[0][i][j] = this->w[0][i][j];
-            childr->w[0][i][j] = parent->w[0][i][j];
-        }
-    }
-    int n1 = 1 + rand() % 3;
+       
 
     //меняем веса на втором слое
-    for (int i = 0; i < n1; i++) {
-        childr->w[1][0][i] = this->w[1][0][i];
-        childr1->w[1][0][i] = parent->w[1][0][i];
+    for (int i = 0; i < 8; i++) {
+        childr->w[1][0][i] = (this->w[1][0][i] + parent->w[1][0][i]) / 2;
+        
     }
 
-    for (int i = n; i < 4; i++) {
-        childr1->w[1][0][i] = this->w[1][0][i];
-        childr->w[1][0][i] = parent->w[1][0][i];
-    }
 
     //находим средний коэффициент для второго слоя
-    double k = (this->koef[1][0] + parent->koef[1][0]) / 2;
-    childr1->koef[1][0] = k;
-    childr->koef[1][0] = k;
+    childr->koef[1][0] = (this->koef[1][0] + parent->koef[1][0]) / 2;
 
-    res.push_back(childr);
-    res.push_back(childr1);
+    
 
-    return res;
+    return childr;
 }
 
 //метод для мутации
@@ -180,12 +165,10 @@ Neiron* Neiron::Mutation( double per) {
     //мутация коэф
     for (int i = 0; i < layers; i++) {
         for (int j = 0; j < neironsCount[i]; j++) {
-            double s = 1;
+           
             double sign = -1 + 2 * (double)rand() / RAND_MAX;
-            double Per = per * (double)rand() / RAND_MAX;
-            if (sign < 0)
-                s = -1;
-            mutant->koef[i][j] = (s * Per  + 1) * this->koef[i][j];
+            
+            mutant->koef[i][j] = (per * sign  + 1) * this->koef[i][j];
         }            
     }
 
@@ -197,12 +180,11 @@ Neiron* Neiron::Mutation( double per) {
                 xSize = neironsCount[i - 1];           
 
             for (int k = 0; k < xSize; k++) {
-                double s = 1;
+               
                 double sign = -1 + 2 * (double)rand() / RAND_MAX;
-                double Per = per * (double)rand() / RAND_MAX;
-                if (sign < 0)
-                    s = -1;
-                mutant->w[i][j][k] = (s * Per + 1) * this->w[i][j][k];
+                
+               
+                mutant->w[i][j][k] = (per * sign + 1) * this->w[i][j][k];
             }               
         }
     }

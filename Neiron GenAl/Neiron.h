@@ -28,7 +28,7 @@ private:
     double*** w;
     double** x;
 
-    double B = 0.2;
+    double B = 1;
 
     //функция активации
     double Function(double S);
@@ -36,7 +36,7 @@ private:
     //перебор слоя
     void LayerFunc(int layer);  
 public:
-    double f;
+    double f = 1;
     //конструктор
     Neiron(int layers, int* neironsCount);
 
@@ -47,7 +47,7 @@ public:
     double Work(double x1, double x2, double x3);
 
     //метод скрещивания двух неиросетей
-    vector<Neiron*> Cross(Neiron* parent);
+    Neiron* Cross(Neiron* parent);
 
     //метод для мутации
     Neiron* Mutation( double per);

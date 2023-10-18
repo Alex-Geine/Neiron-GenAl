@@ -6,8 +6,9 @@ using namespace std;
 class Population {
 private:
 	vector<Neiron*> pop;
-	double mutationPer = 0.07; //0.01  //0.07
-	double maxMutper = 0.7;  //0.05   //0.17
+	double mutationPer = 1; //0.01  //0.07
+	double maxMutper = 0.03;  //0.05   //0.17
+	int Size;
 
 	double Table[8][3] = {
 		{0,0,0},
@@ -20,6 +21,9 @@ private:
 		{1,1,1}
 	};
 
+	int layers = 2;
+	int* newirons = new int[layers];
+	
 public:
 	
 
@@ -36,5 +40,7 @@ public:
 
 	//Функция мутации
 	void Mutations();
+
+	void CreateNew();
 
 };

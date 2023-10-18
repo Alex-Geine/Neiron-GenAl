@@ -1,10 +1,8 @@
 #include "Population.h"
 #include <algorithm>
 
-Population::Population(int count) {
-	int layers = 2;
-	int* newirons = new int[layers];
-	newirons[0] = 4;
+Population::Population(int count): Size(count) {
+	newirons[0] = 8;
 	newirons[1] = 1;
 
 	for (int i = 0; i < count; i++) {
@@ -42,28 +40,7 @@ void Population::Selection() {
 				f2 += fabs(yy2 - y);
 
 			}
-			if ((f1 == 0) || (f2 == 0)) {
-				cout << "hernia" << endl;
-				for (int j = 0; j < 8; j++) {
-					double y = (double)(
-						(bool)Table[j][0] ^
-						(bool)Table[j][1] ^
-						(bool)Table[j][2]
-						);
-					double yy1 = pop[i]->Work(
-						Table[j][0],
-						Table[j][1],
-						Table[j][2]);
-					double yy2 = pop[i + 1]->Work(
-						Table[j][0],
-						Table[j][1],
-						Table[j][2]);
-
-					f1 += fabs(yy1 - y);
-					f2 += fabs(yy2 - y);
-
-				}
-			}
+			
 			pop[i]->f = f1 / 8;
 			pop[i + 1]->f = f2 / 8;
 
@@ -109,15 +86,13 @@ void Population::Crossing() {
 	for (int i = 0; i < pop.size(); i++)
 			n.push_back(pop[i]);
 		
-	while (pop.size() <= 100) {
+	while (pop.size() <= Size) {
 		random_shuffle(n.begin(), n.end());
 		for (int i = 0; i < n.size(); i++) {
-			if (n.size() - i != 1) {				
-				vector<Neiron*> vec = (n[i]->Cross(n[i + 1]));				
-				pop.push_back(vec[0]);
-				pop.push_back(vec[1]);
+			if (n.size() - i != 1) {					
+				pop.push_back(n[i]->Cross(n[i + 1]));				
 			}
-			if (pop.size() >= 100)
+			if (pop.size() >= Size)
 				i = n.size();
 		}		
 	}
@@ -133,4 +108,13 @@ void Population::Mutations() {
 			pop.push_back(pop[i]->Mutation(maxMutper));		
 	}
 
+}
+
+void Population::CreateNew() {
+	for (int i = 0; i < Size/ 2; i++) {
+		newirons[0] = 8;
+		newirons[1] = 1;
+		Neiron* mutant = new Neiron(this->layers, newirons);
+		pop.push_back(mutant);
+	}
 }
